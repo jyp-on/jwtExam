@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.security.APIUserDetailsService;
 import com.example.demo.security.filter.APILoginFilter;
+import com.example.demo.security.filter.RefreshTokenFilter;
 import com.example.demo.security.filter.TokenCheckFilter;
 import com.example.demo.security.handler.APILoginSuccessHandler;
 import com.example.demo.util.JWTUtil;
@@ -79,6 +80,9 @@ public class CustomSecurityConfiig {
         http.addFilterBefore(
                 tokenCheckFilter(jwtUtil),
                 UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(new RefreshTokenFilter("/refreshToken", jwtUtil),
+                TokenCheckFilter.class);
 
         http.csrf().disable();
         http.sessionManagement()
