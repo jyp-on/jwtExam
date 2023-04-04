@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.security.APIUserDetailsService;
 import com.example.demo.security.filter.APILoginFilter;
+import com.example.demo.security.filter.TokenCheckFilter;
 import com.example.demo.security.handler.APILoginSuccessHandler;
 import com.example.demo.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
@@ -71,12 +72,22 @@ public class CustomSecurityConfiig {
         apiLoginFilter.setAuthenticationSuccessHandler(successHandler);
 
         //APILoginFilter 위치 조정
-        http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(apiLoginFilter,
+                UsernamePasswordAuthenticationFilter.class);
+
+        //api로 시작하는 모든 경로는 TokenCheckFilter 동작
+        http.addFilterBefore(
+                tokenCheckFilter(jwtUtil),
+                UsernamePasswordAuthenticationFilter.class);
 
         http.csrf().disable();
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS); //세션을 사용하지 않음
 
         return http.build();
+    }
+
+    private TokenCheckFilter tokenCheckFilter(JWTUtil jwtUtil) {
+        return new TokenCheckFilter(jwtUtil);
     }
 }

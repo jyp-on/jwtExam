@@ -38,3 +38,4 @@ out/
 
 ### app properties ###
 application.properties
+application.yml
